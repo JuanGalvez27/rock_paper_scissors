@@ -1,0 +1,40 @@
+volumes:
+  rock_paper_scissors_data: {}
+  rock_paper_scissors_data_backups: {}
+
+services:
+  postgres:
+    image: postgres:13
+    container_name: postgres
+    volumes:
+      - rock_paper_scissors_data:/var/lib/postgresql/data
+      - rock_paper_scissors_data_backups:/backups
+    env_file:
+      - ./.envs/.local/.postgres
+    ports:
+      - "5432:5432"
+
+  rock_paper_scissors:
+    build: rock_paper_scissors
+    command: bash -c "pip install -r requirements.txt && python manage.py runserver 0.0.0.0:80"
+    restart: always
+    volumes:
+      - ./rock_paper_scissors/.:/app:rw
+    env_file:
+      - ./.envs/.local/.django
+      - ./.envs/.local/.postgres
+    ports:
+      - "8000:80"
+    depends_on:
+      - postgres
+
+  # pgadmin:
+  #   image: dpage/pgadmin4:latest
+  #   container_name: pgadmin_container
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: admin@example.com
+  #     PGADMIN_DEFAULT_PASSWORD: admin_password
+  #   ports:
+  #     - "8080:80"
+  #   depends_on:
+  #     - postgres
