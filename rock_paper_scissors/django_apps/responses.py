@@ -31,3 +31,16 @@ HTTP_response_400 = OpenApiResponse(
     ],
     description="Bad Request",
 )
+
+HTTP_response_404 = OpenApiResponse(
+    response=ResponseErrorSerializer,
+    examples=[
+        OpenApiExample(
+            "Error example",
+            value={
+                "detail": "Error 404: not Found",
+            },
+        ),
+    ],
+    description="Not Found",
+)

@@ -1,4 +1,5 @@
 from django_apps.rounds.models import Round
+from django_apps.games.models import Game
 from django_apps.rounds.serializers import RoundSerializer
 from django_apps.responses import (
     HTTP_response_400,
@@ -55,4 +56,32 @@ class RoundCreateAPIView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class RoundRetrieveAPIView(APIView):
+
+    @extend_schema(
+        tags=["Round"],
+        methods=["GET"],
+        summary="Get Rounds by game",
+        responses={
+            200: OpenApiResponse(
+                response=RoundSerializer(many=True),
+                description="OK",
+            ),
+            500: HTTP_response_500,
+        },
+    )
+    def get(self, request, id, *args, **kwargs):
+        """Get Rounds by Game
+
+        Returns:
+
+            JSON with data of the Rounds.
+
+        """
+        rounds = Round.objects.filter(game_id=id)
+        serializer = RoundSerializer(rounds, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
