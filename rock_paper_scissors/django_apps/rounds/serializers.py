@@ -27,7 +27,6 @@ class RoundSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-        print("validated", validated_data)
         try:
             game = Game.objects.get(id=validated_data["game"])
         except Game.DoesNotExist:
